@@ -1,14 +1,25 @@
-import { useRef } from 'react';
+import { useRef } from "react";
 
-import CartModal from './CartModal.jsx';
+import CartModal, { ModalHandle } from "./CartModal.js";
+import { CartItems } from "../App.js";
 
-export default function Header({ cart, onUpdateCartItemQuantity }) {
-  const modal = useRef();
+type HeaderProps = {
+  cart: CartItems;
+  onUpdateCartItemQuantity: (productId: string, amount: number) => void;
+};
+
+export default function Header({
+  cart,
+  onUpdateCartItemQuantity,
+}: HeaderProps) {
+  const modal = useRef<ModalHandle>(null);
 
   const cartQuantity = cart.items.length;
 
   function handleOpenCartClick() {
-    modal.current.open();
+    if (modal.current) {
+      modal.current.open();
+    }
   }
 
   let modalActions = <button>Close</button>;

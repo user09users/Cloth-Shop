@@ -1,3 +1,5 @@
+import { CartItem } from "../App";
+
 export default function Cart({ items, onUpdateItemQuantity }) {
   const totalPrice = items.reduce(
     (acc, item) => acc + item.price * item.quantity,

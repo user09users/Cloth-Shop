@@ -1,15 +1,27 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import Header from './components/Header.jsx';
-import Shop from './components/Shop.jsx';
-import { DUMMY_PRODUCTS } from './dummy-products.js';
+import Header from "./components/Header.js";
+import Shop from "./components/Shop.js";
+import { DUMMY_PRODUCTS } from "./dummy-products.js";
+
+export type CartItem = {
+  id: string;
+  image?: string;
+  title: string;
+  price: number;
+  description?: string;
+  quantity?: number;
+};
+export type CartItems = {
+  items: CartItem[];
+};
 
 function App() {
-  const [shoppingCart, setShoppingCart] = useState({
+  const [shoppingCart, setShoppingCart] = useState<CartItems>({
     items: [],
   });
 
-  function handleAddItemToCart(id) {
+  function handleAddItemToCart(id: string) {
     setShoppingCart((prevShoppingCart) => {
       const updatedItems = [...prevShoppingCart.items];
 
@@ -18,20 +30,24 @@ function App() {
       );
       const existingCartItem = updatedItems[existingCartItemIndex];
 
-      if (existingCartItem) {
+      if (existingCartItem && existingCartItem.quantity) {
         const updatedItem = {
           ...existingCartItem,
           quantity: existingCartItem.quantity + 1,
         };
         updatedItems[existingCartItemIndex] = updatedItem;
       } else {
-        const product = DUMMY_PRODUCTS.find((product) => product.id === id);
-        updatedItems.push({
-          id: id,
-          name: product.title,
-          price: product.price,
-          quantity: 1,
-        });
+        const product = DUMMY_PRODUCTS.find(
+          (product: CartItem) => product.id === id
+        );
+        if (product) {
+          updatedItems.push({
+            id: id,
+            title: product.title,
+            price: product.price,
+            quantity: 1,
+          });
+        }
       }
 
       return {
@@ -40,7 +56,7 @@ function App() {
     });
   }
 
-  function handleUpdateCartItemQuantity(productId, amount) {
+  function handleUpdateCartItemQuantity(productId: string, amount: number) {
     setShoppingCart((prevShoppingCart) => {
       const updatedItems = [...prevShoppingCart.items];
       const updatedItemIndex = updatedItems.findIndex(
@@ -51,9 +67,10 @@ function App() {
         ...updatedItems[updatedItemIndex],
       };
 
-      updatedItem.quantity += amount;
-
-      if (updatedItem.quantity <= 0) {
+      if (updatedItem.quantity) {
+        updatedItem.quantity += amount;
+      }
+      if (updatedItem.quantity && updatedItem.quantity <= 0) {
         updatedItems.splice(updatedItemIndex, 1);
       } else {
         updatedItems[updatedItemIndex] = updatedItem;
