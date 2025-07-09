@@ -1,8 +1,10 @@
-import { CartItem } from "../App";
+import { useCartContext } from "../store/shopping-cart-context";
 
-export default function Cart({ items, onUpdateItemQuantity }) {
+export default function Cart() {
+  const { items, onAdd, onRemove } = useCartContext();
+
   const totalPrice = items.reduce(
-    (acc, item) => acc + item.price * item.quantity,
+    (acc: number, item) => acc + item.price * item.quantity!,
     0
   );
   const formattedTotalPrice = `$${totalPrice.toFixed(2)}`;
@@ -18,17 +20,13 @@ export default function Cart({ items, onUpdateItemQuantity }) {
             return (
               <li key={item.id}>
                 <div>
-                  <span>{item.name}</span>
+                  <span>{item.title}</span>
                   <span> ({formattedPrice})</span>
                 </div>
                 <div className="cart-item-actions">
-                  <button onClick={() => onUpdateItemQuantity(item.id, -1)}>
-                    -
-                  </button>
+                  <button onClick={() => onRemove(item.id)}>-</button>
                   <span>{item.quantity}</span>
-                  <button onClick={() => onUpdateItemQuantity(item.id, 1)}>
-                    +
-                  </button>
+                  <button onClick={() => onAdd(item.id)}>+</button>
                 </div>
               </li>
             );
